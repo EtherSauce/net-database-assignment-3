@@ -25,7 +25,17 @@ else
         while (!sr.EndOfStream)
         {
             string? line = sr.ReadLine();
-            Console.WriteLine(line);
+                        if (line is not null)
+            {
+                // character details are separated with comma(,)
+                string[] characterDetails = line.Split(',');
+                // 1st array element contains id
+                Ids.Add(UInt64.Parse(characterDetails[0]));
+                // 2nd array element contains character name
+                Names.Add(characterDetails[1]);
+                // 3rd array element contains character description
+                Descriptions.Add(characterDetails[2]);
+            }
         }
         sr.Close();
     }
@@ -46,10 +56,28 @@ else
         if (choice == "1")
         {
             // Add Character
+                        Console.WriteLine("Enter new character name: ");
+            string? Name = Console.ReadLine();
+            if (!string.IsNullOrEmpty(Name)){
+                // generate id - use max value in Ids + 1
+                UInt64 Id = Ids.Max() + 1;
+                Console.WriteLine($"{Id}, {Name}");
+            } else {
+                logger.Error("You must enter a name");
+            }
         }
         else if (choice == "2")
         {
             // Display All Characters
+                        // loop thru Lists
+            for (int i = 0; i < Ids.Count; i++)
+            {
+                // display character details
+                Console.WriteLine($"Id: {Ids[i]}");
+                Console.WriteLine($"Name: {Names[i]}");
+                Console.WriteLine($"Description: {Descriptions[i]}");
+                Console.WriteLine();
+            }
         }
     } while (choice == "1" || choice == "2");
 }
