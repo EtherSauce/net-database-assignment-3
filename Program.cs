@@ -13,12 +13,7 @@ else
 {
         // create parallel lists of character details
     // lists are used since we do not know number of lines of data
-    List<UInt64> Ids = [];
-    List<string> Names = [];
-    List<string?> Descriptions = [];
-    List<string> Species = [];
-    List<string> FirstAppearances = [];
-    List<int> YearCreated = [];
+    List<Character> characters = [];
         // to populate the lists with data, read from the data file
     try
     {
@@ -30,20 +25,22 @@ else
             string? line = sr.ReadLine();
                         if (line is not null)
             {
+                Character character = new();
                 // character details are separated with comma(,)
                 string[] characterDetails = line.Split(',');
                 // 1st array element contains id
-                Ids.Add(UInt64.Parse(characterDetails[0]));
+                character.Id = UInt64.Parse(characterDetails[0]);
                 // 2nd array element contains character name
-                Names.Add(characterDetails[1]);
+                character.Name = characterDetails[1] ?? string.Empty;
                 // 3rd array element contains character description
-                Descriptions.Add(characterDetails[2]);
+                character.Description = characterDetails[2] ?? string.Empty;
                 // 4th array is the species
-                Species.Add(characterDetails[3]);
+                character.Species.Add(characterDetails[3]) ?? string.Empty;
                 // 5th array is game first appeared in
-                FirstAppearances.Add(characterDetails[4]);
+                character.FirstAppearances.Add(characterDetails[4]) ?? string.Empty;
                 // 6th array is year appered
-                YearCreated.Add(int.Parse(characterDetails[5]));
+                character.YearCreated.Add(int.Parse(characterDetails[5])) ?? string.Empty;
+                characters.Add(character);
             }
         }
         sr.Close();
@@ -65,42 +62,41 @@ else
         if (choice == "1")
         {
             // Add Character
+            Character character = new();
                         Console.WriteLine("Enter new character name: ");
-            string? Name = Console.ReadLine();
-            if (!string.IsNullOrEmpty(Name)){
+            character.Name = Console.ReadLine() ?? string.Empty;
+            if (!string.IsNullOrEmpty(character.Name)){
                                 // check for duplicate name
-                List<string> LowerCaseNames = Names.ConvertAll(n => n.ToLower());
-                if (LowerCaseNames.Contains(Name.ToLower()))
+                List<string> LowerCaseNames = character.ConvertAll(character => character.Name.ToLower());
+                if (LowerCaseNames.Contains(character.Name.ToLower()))
                 {
-                    logger.Info($"Duplicate name {Name}");
+                    logger.Info($"Duplicate name {character.Name}");
                 }
                 else
                 {
                     // generate id - use max value in Ids + 1
-                    UInt64 Id = Ids.Max() + 1;
+                    character.Id = characters.Max(character => character.Id) + 1;
                                         // input character description
                     Console.WriteLine("Enter description:");
-                    string? Description = Console.ReadLine();
+                    character.Description = Console.ReadLine() ?? string.Empty;
                     // input species
                     Console.WriteLine("Enter species:");
-                    string? SpeciesInput = Console.ReadLine();
+                    character.SpeciesInput = Console.ReadLine() ?? string.Empty;
                     // input first appearance
                     Console.WriteLine("Enter first appearance:");
-                    string? FirstAppearance = Console.ReadLine();
+                    character.FirstAppearance = Console.ReadLine() ?? string.Empty;
                     // input year created
                     Console.WriteLine("Enter year created: ");
-                    string? yearCreated = Console.ReadLine();
+                    character.yearCreated = Console.ReadLine() ?? string.Empty;
                     // Console.WriteLine($"{Id}, {Name}, {Description}");
                     // create file from data
                     StreamWriter sw = new(file, true);
-                    sw.WriteLine($"{Id},{Name},{Description},{SpeciesInput},{FirstAppearance},{yearCreated}");
+                    sw.WriteLine($"{character.Id},{character.Name},{character.Description},{charcter.SpeciesInput},{charcter.FirstAppearance},{character.yearCreated}");
                     sw.Close();
                     // add new character details to Lists
-                    Ids.Add(Id);
-                    Names.Add(Name);
-                    Descriptions.Add(Description);
+                    characters.Add(character);
                     // log transaction
-                    logger.Info($"Character id {Id} added");
+                    logger.Info($"Character id {character.Id} added");
                 }
             } else {
                 logger.Error("You must enter a name");
@@ -109,17 +105,10 @@ else
         else if (choice == "2")
         {
             // Display All Characters
-                        // loop thru Lists
-            for (int i = 0; i < Ids.Count; i++)
+                        // loop thru List
+            foreach(Character character in characters)
             {
-                // display character details
-                Console.WriteLine($"Id: {Ids[i]}");
-                Console.WriteLine($"Name: {Names[i]}");
-                Console.WriteLine($"Description: {Descriptions[i]}");
-                Console.WriteLine($"Species: {Species[i]}");
-                Console.WriteLine($"First Appearance/Year Created: {FirstAppearances[i]}");
-                Console.WriteLine($"Year created: {YearCreated[i]}");
-                Console.WriteLine();
+                Console.WriteLine(character.Display());
             }
         }
     } while (choice == "1" || choice == "2");

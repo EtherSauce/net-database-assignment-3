@@ -8,11 +8,11 @@ class Character
 
     public string Description { get; set; } = string.Empty;
 
-    public string Species = {get; set;} = string.Empty;
+    public string Species = { get; set; } = string.Empty;
 
-    public string FirstAppearances = {get; set;} = string.Empty;
+    public string FirstAppearances = { get; set; } = string.Empty;
 
-    int YearCreated = { get; set;};
+    int YearCreated = { get; set; } = ?? string.Empty;
 
 
     public string Display()
