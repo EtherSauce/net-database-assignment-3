@@ -35,11 +35,11 @@ else
                 // 3rd array element contains character description
                 character.Description = characterDetails[2] ?? string.Empty;
                 // 4th array is the species
-                character.Species.Add(characterDetails[3]) ?? string.Empty;
+                character.Species =(characterDetails[3]) ?? string.Empty;
                 // 5th array is game first appeared in
-                character.FirstAppearances.Add(characterDetails[4]) ?? string.Empty;
+                character.FirstAppearances =(characterDetails[4]) ?? string.Empty;
                 // 6th array is year appered
-                character.YearCreated.Add(int.Parse(characterDetails[5])) ?? string.Empty;
+                character.YearCreated = int.Parse(characterDetails[5]);
                 characters.Add(character);
             }
         }
@@ -67,7 +67,7 @@ else
             character.Name = Console.ReadLine() ?? string.Empty;
             if (!string.IsNullOrEmpty(character.Name)){
                                 // check for duplicate name
-                List<string> LowerCaseNames = character.ConvertAll(character => character.Name.ToLower());
+                List<string> LowerCaseNames = characters.ConvertAll(character => character.Name.ToLower());
                 if (LowerCaseNames.Contains(character.Name.ToLower()))
                 {
                     logger.Info($"Duplicate name {character.Name}");
@@ -81,17 +81,24 @@ else
                     character.Description = Console.ReadLine() ?? string.Empty;
                     // input species
                     Console.WriteLine("Enter species:");
-                    character.SpeciesInput = Console.ReadLine() ?? string.Empty;
+                    character.Species = Console.ReadLine() ?? string.Empty;
                     // input first appearance
                     Console.WriteLine("Enter first appearance:");
-                    character.FirstAppearance = Console.ReadLine() ?? string.Empty;
+                    character.FirstAppearances = Console.ReadLine() ?? string.Empty;
                     // input year created
                     Console.WriteLine("Enter year created: ");
-                    character.yearCreated = Console.ReadLine() ?? string.Empty;
+                    if (int.TryParse(Console.ReadLine(), out int year))
+                    {
+                        character.YearCreated = year;
+                    }
+                    else
+                    {
+                        logger.Error("Invalid input for year created. Please enter a valid number.");
+                    }
                     // Console.WriteLine($"{Id}, {Name}, {Description}");
                     // create file from data
                     StreamWriter sw = new(file, true);
-                    sw.WriteLine($"{character.Id},{character.Name},{character.Description},{charcter.SpeciesInput},{charcter.FirstAppearance},{character.yearCreated}");
+                    sw.WriteLine($"{character.Id},{character.Name},{character.Description},{character.Species},{character.FirstAppearances},{character.YearCreated}");
                     sw.Close();
                     // add new character details to Lists
                     characters.Add(character);
